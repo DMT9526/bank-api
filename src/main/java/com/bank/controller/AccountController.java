@@ -3,6 +3,10 @@ package com.bank.controller;
 
 import com.bank.model.Account;
 import com.bank.service.AccountService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +22,11 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    public record CreateAccountRequest(String firstName, String lastName, BigDecimal openingBalance) {
+    public record CreateAccountRequest(@NotBlank  String firstName, @NotBlank  String lastName, @NotNull @PositiveOrZero BigDecimal openingBalance) {
     }
 
     @PostMapping
-    public ResponseEntity<Account> create(@RequestBody CreateAccountRequest request){
+    public ResponseEntity<Account> create(@Valid @RequestBody  CreateAccountRequest request){
         Account created = accountService.create(request.firstName(), request.lastName(), request.openingBalance());
         return ResponseEntity.created(URI.create("/accounts/" + created.getId())).body(created);
     }
